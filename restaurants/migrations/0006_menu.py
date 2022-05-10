@@ -7,17 +7,35 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('restaurants', '0005_alter_restauranttimeslot_unique_together'),
+        ("restaurants", "0005_alter_restauranttimeslot_unique_together"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Menu',
+            name="Menu",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255)),
-                ('price', models.DecimalField(decimal_places=2, default=0, max_digits=8)),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='menus', to='restaurants.restaurant')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255)),
+                (
+                    "price",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=8),
+                ),
+                (
+                    "restaurant",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="menus",
+                        to="restaurants.restaurant",
+                    ),
+                ),
             ],
         ),
     ]
