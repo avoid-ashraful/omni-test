@@ -5,6 +5,9 @@ class Restaurant(models.Model):
     name = models.CharField(max_length=255, unique=True)
     cash_balance = models.DecimalField(max_digits=15, decimal_places=2, default=0)
 
+    def __str__(self):
+        return self.name
+
 
 class RestaurantTimeSlot(models.Model):
     DAY_CHOICES = [
@@ -24,6 +27,9 @@ class RestaurantTimeSlot(models.Model):
     opening_hour = models.TimeField()
     closing_hour = models.TimeField()
 
+    def __str__(self):
+        return self.restaurant
+
     class Meta:
         unique_together = (
             "restaurant",
@@ -39,3 +45,6 @@ class Menu(models.Model):
     )
     name = models.CharField(max_length=255)
     price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
+
+    def __str__(self):
+        return self.name

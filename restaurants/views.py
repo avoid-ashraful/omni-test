@@ -50,11 +50,3 @@ class RestaurantMenuListAPIView(ListAPIView):
         else:
             query_params["m__lt"] = int(no_of_dish)
         return queryset.annotate(m=Count("menus")).filter(**query_params)
-
-
-class RestaurantMenuSearchListAPIView(ListAPIView):
-    serializer_class = RestaurantMenuSerializer
-
-    def get_queryset(self):
-
-        return queryset

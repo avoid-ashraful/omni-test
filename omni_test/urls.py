@@ -19,6 +19,7 @@ from django.urls import path, include
 
 api_patterns = [
     path("restaurants/", include("restaurants.urls", namespace="restaurant")),
+    path("users/", include("users.urls", namespace="user")),
 ]
 
 

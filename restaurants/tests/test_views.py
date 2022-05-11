@@ -1,10 +1,9 @@
 import pytest
 
 from datetime import datetime, timedelta
-from factory import create_batch, fuzzy
+from factory import fuzzy
 
 from django.urls import reverse
-from restaurants.models import Restaurant, RestaurantTimeSlot
 from restaurants.tests.factories import (
     MenuFactory,
     RestaurantFactory,
@@ -68,7 +67,7 @@ class TestRestaurantMenuListViews(Base):
         )
 
     def test_restaurant_top_list_api(self, client, url, restaurant):
-        menus = MenuFactory.create_batch(size=10, restaurant=restaurant)
+        MenuFactory.create_batch(size=10, restaurant=restaurant)
         response = client.get(url)
         assert response.status_code == status.HTTP_200_OK
         assert response.data.get("results", [{}])[0].get("no_of_menus")
@@ -81,7 +80,7 @@ class TestRestaurantMenuListViews(Base):
         assert response.data.get("results", [{}])[0].get("no_of_menus") == 10
 
     def test_restaurant_top_list_api_with_params_more(self, client, url, restaurant):
-        menus = MenuFactory.create_batch(size=10, restaurant=restaurant)
+        MenuFactory.create_batch(size=10, restaurant=restaurant)
         response = client.get(f"{url}?eq=more&no_of_dish=9")
         assert response.status_code == status.HTTP_200_OK
         assert response.data.get("count") == 1
@@ -118,7 +117,7 @@ class TestRestaurantMenuSearchListViews(Base):
         assert response.data.get("count") == 1
 
     def test_restaurant_menu_search_api_by_menu_error(self, client, url, restaurant):
-        menu = MenuFactory(name=fuzzy.FuzzyText().fuzz())
+        MenuFactory(name=fuzzy.FuzzyText().fuzz())
 
         response = client.get(f"{url}?search={fuzzy.FuzzyText().fuzz()}")
         assert response.status_code == status.HTTP_200_OK
