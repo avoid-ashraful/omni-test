@@ -1,8 +1,7 @@
 from django.core.management.base import BaseCommand
 
 
-import csv, urllib.request, json, re
-from django.db.models import Count
+import json, re
 
 from restaurants.models import Menu, Restaurant, RestaurantTimeSlot
 from restaurants.utils import (
