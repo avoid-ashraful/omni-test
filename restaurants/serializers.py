@@ -10,10 +10,19 @@ class RestaurantSerializer(serializers.ModelSerializer):
 
 
 class RestaurantMenuSerializer(RestaurantSerializer):
-    menu = serializers.SerializerMethodField()
+    menus = serializers.SerializerMethodField()
+    no_of_menus = serializers.SerializerMethodField()
 
-    def get_menu(self, restaurant):
+    def get_menus(self, restaurant):
         return restaurant.menus.all().values("id", "name", "price")
 
+    def get_no_of_menus(self, restaurant):
+        return restaurant.menus.count()
+
     class Meta(RestaurantSerializer.Meta):
-        fields = ["id", "name", "menu"]
+        fields = [
+            "id",
+            "name",
+            "no_of_menus",
+            "menus",
+        ]
