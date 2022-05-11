@@ -4,7 +4,9 @@ from datetime import datetime
 from rest_framework.generics import ListAPIView
 from restaurants.models import Restaurant, RestaurantTimeSlot
 
-from restaurants.serializers import RestaurantSerializer
+from django.db.models import Count
+
+from restaurants.serializers import RestaurantMenuSerializer, RestaurantSerializer
 
 
 class RestaurantListAPIView(ListAPIView):
@@ -23,3 +25,20 @@ class RestaurantListAPIView(ListAPIView):
             day=datetime_object.isoweekday(),
         ).values_list("restaurant_id", flat=True)
         return Restaurant.objects.filter(id__in=restaurant_ids)
+
+
+class RestaurantMenuListAPIView(ListAPIView):
+    serializer_class = RestaurantMenuSerializer
+
+    def get_queryset(self):
+        equation = self.request.query_params.get("eq")
+        no_of_dish = self.request.query_params.get("no_of_dish")
+
+        if not (equation and no_of_dish):
+            return Restaurant.objects.all()
+        query_params = {}
+        if equation == "more":
+            query_params["m__gt"] = int(no_of_dish)
+        else:
+            query_params["m__lt"] = int(no_of_dish)
+        return Restaurant.objects.annotate(m=Count("menus")).filter(**query_params)
