@@ -44,18 +44,18 @@ def add_restaurant_timeslots(restaurants):
             day = day.split(",")
             opening_time, closing_time = get_opening_closing_time_object(time)
 
-            for d in day:
+            for each_day in day:
                 all_days = []
-                if "-" in d:
-                    from_d, to_d = d.split("-")
-                    from_d_weekday, to_d_weekday = get_isoweekday(
-                        from_d
-                    ), get_isoweekday(to_d)
+                if "-" in each_day:
+                    from_day, to_day = each_day.split("-")
+                    from_day_weekday = get_isoweekday(from_day)
+                    to_day_weekday = get_isoweekday(to_day)
+
                     all_days = all_days + get_concurrent_days(
-                        from_d_weekday, to_d_weekday
+                        from_day_weekday, to_day_weekday
                     )
                 else:
-                    all_days.append(get_isoweekday(d))
+                    all_days.append(get_isoweekday(each_day))
                 each_restaurant["all_days"] = all_days
                 each_restaurant["opening_time"] = opening_time
                 each_restaurant["closing_time"] = closing_time
