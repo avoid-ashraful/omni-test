@@ -24,7 +24,6 @@ api_patterns = [
 
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
     path(
         "api/",
         include(arg=(api_patterns, "omni_test"), namespace="api"),
