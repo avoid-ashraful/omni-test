@@ -2,10 +2,11 @@ from dateutil import parser
 from datetime import datetime
 
 from rest_framework.generics import ListAPIView
-from restaurants.models import Restaurant, RestaurantTimeSlot
+from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Count, Q, Prefetch
 
-from django.db.models import Count, Q
-
+from restaurants.filters import RestaurantFilter
+from restaurants.models import Menu, Restaurant, RestaurantTimeSlot
 from restaurants.serializers import RestaurantMenuSerializer, RestaurantSerializer
 
 
@@ -29,24 +30,33 @@ class RestaurantListAPIView(ListAPIView):
 
 class RestaurantMenuListAPIView(ListAPIView):
     serializer_class = RestaurantMenuSerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_class = RestaurantFilter
 
     def get_queryset(self):
-        queryset = Restaurant.objects.prefetch_related("menus").all().order_by("-name")
 
-        search = self.request.query_params.get("search", "")
-        if search:
-            return queryset.filter(
-                Q(name__icontains=search) | Q(menus__name__icontains=search)
+        menu_price_query = {}
+        if self.request.query_params.get("price_min"):
+            menu_price_query["price__gte"] = self.request.query_params.get("price_min")
+        if self.request.query_params.get("price_max"):
+            menu_price_query["price__lte"] = self.request.query_params.get("price_max")
+
+        search_restaurant_query = {}
+        search_menu_query = {}
+        if self.request.query_params.get("search"):
+            search_restaurant_query["name__icontains"] = self.request.query_params.get(
+                "search"
+            )
+            search_menu_query["name__icontains"] = self.request.query_params.get(
+                "search"
             )
 
-        equation = self.request.query_params.get("eq")
-        no_of_dish = self.request.query_params.get("no_of_dish")
-
-        if not (equation and no_of_dish):
-            return queryset
-        query_params = {}
-        if equation == "more":
-            query_params["m__gt"] = int(no_of_dish)
-        else:
-            query_params["m__lt"] = int(no_of_dish)
-        return queryset.annotate(m=Count("menus")).filter(**query_params)
+        menus = Menu.objects.filter(**menu_price_query, **search_menu_query)
+        return (
+            Restaurant.objects.filter(
+                Q(**search_restaurant_query)
+                | Q(menus__name__icontains=self.request.query_params.get("search", ""))
+            )
+            .prefetch_related(Prefetch("menus", queryset=menus))
+            .annotate(total_menu=Count("menus", filter=Q(menus__in=menus)))
+        )

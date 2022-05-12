@@ -8,38 +8,96 @@ class Migration(migrations.Migration):
 
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Restaurant',
+            name="Restaurant",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(max_length=255, unique=True)),
-                ('cash_balance', models.DecimalField(decimal_places=2, default=0, max_digits=15)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=255, unique=True)),
+                (
+                    "cash_balance",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=15),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Menu',
+            name="Menu",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.TextField()),
-                ('price', models.DecimalField(decimal_places=2, default=0, max_digits=8)),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='menus', to='restaurants.restaurant')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.TextField()),
+                (
+                    "price",
+                    models.DecimalField(decimal_places=2, default=0, max_digits=8),
+                ),
+                (
+                    "restaurant",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="menus",
+                        to="restaurants.restaurant",
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='RestaurantTimeSlot',
+            name="RestaurantTimeSlot",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('day', models.PositiveSmallIntegerField(choices=[(1, 'Mon'), (2, 'Tues'), (3, 'Weds'), (4, 'Thurs'), (5, 'Fri'), (6, 'Sat'), (7, 'Sun')])),
-                ('opening_hour', models.TimeField()),
-                ('closing_hour', models.TimeField()),
-                ('restaurant', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='time_slots', to='restaurants.restaurant')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "day",
+                    models.PositiveSmallIntegerField(
+                        choices=[
+                            (1, "Mon"),
+                            (2, "Tues"),
+                            (3, "Weds"),
+                            (4, "Thurs"),
+                            (5, "Fri"),
+                            (6, "Sat"),
+                            (7, "Sun"),
+                        ]
+                    ),
+                ),
+                ("opening_hour", models.TimeField()),
+                ("closing_hour", models.TimeField()),
+                (
+                    "restaurant",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="time_slots",
+                        to="restaurants.restaurant",
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('restaurant', 'day', 'opening_hour', 'closing_hour')},
+                "unique_together": {
+                    ("restaurant", "day", "opening_hour", "closing_hour")
+                },
             },
         ),
     ]

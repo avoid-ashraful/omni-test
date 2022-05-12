@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # third-party-apps
     "rest_framework",
+    "django_filters",
     # product-apps
     "restaurants",
     "users",
@@ -93,6 +94,13 @@ DEFAULT_DATABASE = config(
 )
 
 DATABASES = {"default": DEFAULT_DATABASE}
+
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
+    }
+}
 
 
 # Password validation

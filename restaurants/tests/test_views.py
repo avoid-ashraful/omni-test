@@ -70,29 +70,47 @@ class TestRestaurantMenuListViews(Base):
         MenuFactory.create_batch(size=10, restaurant=restaurant)
         response = client.get(url)
         assert response.status_code == status.HTTP_200_OK
-        assert response.data.get("results", [{}])[0].get("no_of_menus")
+        assert response.data.get("results", [{}])[0].get("total_menu")
 
-    def test_restaurant_top_list_api_with_params_less(self, client, url, restaurant):
+    def test_restaurant_top_list_api_with_params_total_menu_with_range(
+        self, client, url, restaurant
+    ):
         MenuFactory.create_batch(size=10, restaurant=restaurant)
-        response = client.get(f"{url}?eq=less&no_of_dish=11")
+        response = client.get(f"{url}?total_menu_min=9&total_menu_max=11")
+
         assert response.status_code == status.HTTP_200_OK
         assert response.data.get("count") == 1
-        assert response.data.get("results", [{}])[0].get("no_of_menus") == 10
+        assert response.data.get("results", [{}])[0].get("total_menu") == 10
 
-    def test_restaurant_top_list_api_with_params_more(self, client, url, restaurant):
+    def test_restaurant_top_list_api_with_params_total_menu_with_out_range(
+        self, client, url, restaurant
+    ):
         MenuFactory.create_batch(size=10, restaurant=restaurant)
-        response = client.get(f"{url}?eq=more&no_of_dish=9")
+        response = client.get(f"{url}?total_menu_min=11&total_menu_max=12")
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data.get("count") == 0
+        assert not response.data.get("results")
+
+    def test_restaurant_top_list_api_with_params_menu_price_with_range(
+        self, client, url, restaurant
+    ):
+        menus = MenuFactory.create_batch(size=10, restaurant=restaurant)
+        menus[0].price = 100
+        menus[0].save()
+
+        response = client.get(f"{url}?price_min=99&price_max=101")
+
         assert response.status_code == status.HTTP_200_OK
         assert response.data.get("count") == 1
-        assert response.data.get("results", [{}])[0].get("no_of_menus") == 10
+        assert response.data.get("results", [{}])[0].get("total_menu") == 1
 
 
-class TestRestaurantMenuSearchListViews(Base):
-    @pytest.fixture
-    def url(self):
-        return reverse(
-            "api:restaurants:list-menu",
-        )
+class TestRestaurantMenuSearchListViews(TestRestaurantMenuListViews):
+    # @pytest.fixture
+    # def url(self):
+    #     return reverse(
+    #         "api:restaurants:list-menu",
+    #     )
 
     def test_restaurant_menu_search_api_by_restaurant(self, client, url, restaurant):
         response = client.get(f"{url}?search={restaurant.name[:3]}")
