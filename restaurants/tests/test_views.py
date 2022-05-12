@@ -73,7 +73,7 @@ class TestRestaurantMenuListViews(Base):
         assert response.data.get("results", [{}])[0].get("no_of_menus")
 
     def test_restaurant_top_list_api_with_params_less(self, client, url, restaurant):
-        menus = MenuFactory.create_batch(size=10, restaurant=restaurant)
+        MenuFactory.create_batch(size=10, restaurant=restaurant)
         response = client.get(f"{url}?eq=less&no_of_dish=11")
         assert response.status_code == status.HTTP_200_OK
         assert response.data.get("count") == 1
