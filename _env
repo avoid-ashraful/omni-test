@@ -1,1 +1,6 @@
 DEBUG=true
+POSTGRES_USER=omni
+POSTGRES_PASSWORD=omni
+POSTGRES_DB=omni
+PGDATA=/var/lib/postgresql/data/pgdata
+DATABASE_URL=postgres://omni:omni@db:5432/omni

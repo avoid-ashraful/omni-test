@@ -1,7 +1,8 @@
 from django.core.management.base import BaseCommand
 
 
-import json, re
+import json
+import re
 
 from restaurants.models import Menu, Restaurant, RestaurantTimeSlot
 from restaurants.utils import (

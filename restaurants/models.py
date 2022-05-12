@@ -43,7 +43,7 @@ class Menu(models.Model):
     restaurant = models.ForeignKey(
         Restaurant, on_delete=models.CASCADE, related_name="menus"
     )
-    name = models.CharField(max_length=255)
+    name = models.TextField()
     price = models.DecimalField(max_digits=8, decimal_places=2, default=0)
 
     def __str__(self):

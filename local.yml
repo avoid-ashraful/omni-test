@@ -1,0 +1,37 @@
+version: "3"
+
+volumes:
+  db:
+
+services:
+  worker: &worker
+    build:
+      context: .
+      dockerfile: ./dockerfiles/Dockerfile
+    env_file:
+      - .env
+    depends_on:
+      - db
+
+  web:
+    <<: *worker
+    volumes:
+      - ./:/app
+
+    command: >
+      bash -c "urlwait &&
+      ./manage.py migrate &&
+      ./manage.py runserver 0.0.0.0:8080"
+
+    ports:
+      - "8080:8080"
+    restart: always
+
+  db:
+    image: postgres:12
+    env_file:
+      - .env
+    ports:
+      - "5432:5432"
+    volumes:
+      - db:/var/lib/postgresql/data/pgdata

@@ -31,13 +31,13 @@ class RestaurantMenuListAPIView(ListAPIView):
     serializer_class = RestaurantMenuSerializer
 
     def get_queryset(self):
+        queryset = Restaurant.objects.prefetch_related("menus").all().order_by("-name")
+
         search = self.request.query_params.get("search", "")
         if search:
-            return Restaurant.objects.filter(
+            return queryset.filter(
                 Q(name__icontains=search) | Q(menus__name__icontains=search)
             )
-
-        queryset = Restaurant.objects.all().order_by("-name")
 
         equation = self.request.query_params.get("eq")
         no_of_dish = self.request.query_params.get("no_of_dish")
