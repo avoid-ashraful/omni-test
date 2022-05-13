@@ -106,12 +106,6 @@ class TestRestaurantMenuListViews(Base):
 
 
 class TestRestaurantMenuSearchListViews(TestRestaurantMenuListViews):
-    # @pytest.fixture
-    # def url(self):
-    #     return reverse(
-    #         "api:restaurants:list-menu",
-    #     )
-
     def test_restaurant_menu_search_api_by_restaurant(self, client, url, restaurant):
         response = client.get(f"{url}?search={restaurant.name[:3]}")
 

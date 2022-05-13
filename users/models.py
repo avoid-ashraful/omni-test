@@ -3,7 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.core.exceptions import ValidationError
 
 
-from restaurants.models import Menu
+from restaurants.models import Menu, Restaurant
 
 
 class User(AbstractUser):
@@ -43,14 +43,18 @@ class PurchaseHistory(models.Model):
 
     def save(self, *args, **kwargs):
         self.clean()
-        with transaction.atomic():
-            self.user.cash_balance = self.user.cash_balance - self.menu.price
-            self.user.save()
 
-            self.menu.restaurant.cash_balance = (
-                self.menu.restaurant.cash_balance + self.menu.price
+        with transaction.atomic():
+            # locking rows until the end of the transaction
+            user = User.objects.select_for_update().filter(id=self.user.id)
+            restaurant = Restaurant.objects.select_for_update().filter(
+                id=self.menu.restaurant.id
             )
-            self.menu.restaurant.save()
+
+            user.update(cash_balance=self.user.cash_balance - self.menu.price)
+            restaurant.update(
+                cash_balance=self.menu.restaurant.cash_balance + self.menu.price
+            )
 
             self.transaction_amount = self.menu.price
             return super(PurchaseHistory, self).save(*args, **kwargs)
